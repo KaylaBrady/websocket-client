@@ -529,10 +529,8 @@ class WebSocketApp:
                 KeyboardInterrupt,
                 SSLEOFError,
             ) as e:
-                if custom_dispatcher:
-                    return handleDisconnect(e, bool(reconnect))
-                else:
-                    raise e
+                return handleDisconnect(e, bool(reconnect))
+              
 
             if op_code == ABNF.OPCODE_CLOSE:
                 return teardown(frame)
@@ -598,11 +596,12 @@ class WebSocketApp:
 
             if reconnect:
                 _logging.info(f"{e} - reconnect")
-                if custom_dispatcher:
-                    _logging.debug(
-                        f"Calling custom dispatcher reconnect [{len(inspect.stack())} frames in stack]"
-                    )
-                    dispatcher.reconnect(reconnect, setSock)
+
+                #TODO - make this debug
+                _logging.info(
+                    f"Calling custom dispatcher reconnect [{len(inspect.stack())} frames in stack]"
+                )
+                dispatcher.reconnect(reconnect, setSock)
             else:
                 _logging.error(f"{e} - goodbye")
                 teardown()
